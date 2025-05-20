@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartPantry_backend.Models;
+using System.Text.Json;
 
 namespace SmartPantry_backend.Controllers
 {
@@ -17,14 +18,13 @@ namespace SmartPantry_backend.Controllers
         public async Task<ActionResult<IEnumerable<AvailableProduct>>> GetAll()
         {
             return await _context.AvailableProducts
-                .Include(a => a.Product)
+                .Include(a => a.Product)   // <---- This ensures Product is loaded
                 .ToListAsync();
         }
-
         [HttpGet("expiring-soon")]
         public async Task<ActionResult<IEnumerable<AvailableProduct>>> GetExpiringSoon()
         {
-            var threshold = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+            var threshold = DateTime.Today.AddDays(3);  // Use DateTime
             return await _context.AvailableProducts
                 .Where(p => p.ExpiryDate.HasValue && p.ExpiryDate.Value <= threshold)
                 .Include(p => p.Product)
@@ -44,10 +44,12 @@ namespace SmartPantry_backend.Controllers
         [HttpPost]
         public async Task<ActionResult<AvailableProduct>> Create(AvailableProduct ap)
         {
+            Console.WriteLine("Received expiryDate: " + ap.ExpiryDate);
             _context.AvailableProducts.Add(ap);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = ap.AvailableProductId }, ap);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, AvailableProduct ap)
@@ -67,5 +69,8 @@ namespace SmartPantry_backend.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        
+
     }
 }

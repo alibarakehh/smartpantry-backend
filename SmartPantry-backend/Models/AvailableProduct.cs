@@ -13,9 +13,11 @@ public partial class AvailableProduct
 
     public DateTime PurchasingTime { get; set; }
 
-    public DateOnly? ExpiryDate { get; set; }
+    public DateTime? ExpiryDate { get; set; }
 
     public string? OriginalUnit { get; set; }
 
-    public virtual Product Product { get; set; } = null!;
+    public virtual Product? Product { get; set; }
+
+
 }

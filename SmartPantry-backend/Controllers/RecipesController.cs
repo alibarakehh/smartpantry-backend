@@ -26,10 +26,15 @@ namespace SmartPantry_backend.Controllers
         {
             var recipe = await _context.Recipes
                 .Include(r => r.ProductRecipes)
+                    .ThenInclude(pr => pr.Product)
                 .FirstOrDefaultAsync(r => r.RecipeId == id);
 
-            return recipe == null ? NotFound() : Ok(recipe);
+            if (recipe == null)
+                return NotFound();
+
+            return Ok(recipe);
         }
+
 
         [HttpPost]
         public async Task<ActionResult<Recipe>> Create(Recipe recipe)
@@ -57,5 +62,7 @@ namespace SmartPantry_backend.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+
     }
 }

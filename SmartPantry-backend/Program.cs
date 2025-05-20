@@ -6,11 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 // ✅ Add services to the container
 builder.Services.AddEndpointsApiExplorer(); // Required for Swagger
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
